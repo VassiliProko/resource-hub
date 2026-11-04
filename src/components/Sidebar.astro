@@ -1,0 +1,67 @@
+---
+import { slug } from '../lib/notion';
+const { groups } = Astro.props as { groups: { name: string; count: number }[] };
+---
+<nav
+  id="sidenav"
+  aria-label="Sections"
+  class="group/nav fixed left-6 top-1/2 z-40 hidden w-64 -translate-y-1/2 py-6 pl-3 xl:block"
+>
+  <ul class="flex flex-col">
+    {groups.map((g) => (
+      <li>
+        <a
+          href={`#${slug(g.name)}`}
+          data-nav={slug(g.name)}
+          aria-label={g.name}
+          class="group/item flex items-center py-[3px] pr-3"
+        >
+          <span class="flex w-5 shrink-0"><span class="h-0.5 w-3 rounded-full bg-neutral-300 transition-all duration-200 group-hover/item:bg-neutral-500 group-[[data-active]]/item:w-5 group-[[data-active]]/item:bg-neutral-900"></span></span>
+          <span class="ml-4 whitespace-nowrap text-sm text-neutral-500 opacity-0 transition-[opacity,color] duration-200 group-data-[open]/nav:opacity-100 group-hover/item:text-neutral-900 group-[[data-active]]/item:text-neutral-900">
+            {g.name} <span class="ml-1 text-neutral-400">{g.count}</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-nav]')];
+  const sections = [...document.querySelectorAll<HTMLElement>('[data-section]')];
+  // After a click, keep the clicked item active (the page may not be able to scroll far
+  // enough to put that section at the top, e.g. near the bottom) until the user scrolls themselves.
+  let locked: string | null = null;
+
+  function setActive(id?: string) {
+    links.forEach((a) => (a.dataset.nav === id ? a.setAttribute('data-active', '') : a.removeAttribute('data-active')));
+  }
+
+  function update() {
+    if (locked) return setActive(locked);
+    const line = innerHeight * 0.35;
+    let current = sections[0];
+    for (const s of sections) if (s.getBoundingClientRect().top <= line) current = s;
+    if (innerHeight + scrollY >= document.body.scrollHeight - 4) current = sections[sections.length - 1];
+    setActive(current?.id);
+  }
+
+  links.forEach((a) =>
+    a.addEventListener('click', () => {
+      locked = a.dataset.nav!;
+      setActive(locked);
+    })
+  );
+  for (const ev of ['wheel', 'touchmove', 'keydown'] as const)
+    addEventListener(ev, () => { locked = null; update(); }, { passive: true });
+
+  addEventListener('scroll', update, { passive: true });
+  addEventListener('resize', update);
+  update();
+
+  // Keep the labels open while the pointer is anywhere over the strip, with a short grace period on leave.
+  const nav = document.getElementById('sidenav')!;
+  let t: number;
+  nav.addEventListener('mouseenter', () => { clearTimeout(t); nav.setAttribute('data-open', ''); });
+  nav.addEventListener('mouseleave', () => { t = window.setTimeout(() => nav.removeAttribute('data-open'), 300); });
+</script>

@@ -1,0 +1,28 @@
+---
+import arrow from '@phosphor-icons/core/assets/regular/arrow-up-right.svg?raw';
+import type { Resource } from '../lib/notion';
+import { existsSync } from 'node:fs';
+
+const { r } = Astro.props as { r: Resource };
+const host = new URL(r.url).hostname.replace(/^www\./, '');
+const localIcon = `/icons/${r.id}.png`;
+const icon = existsSync(`public${localIcon}`)
+  ? localIcon
+  : `https://www.google.com/s2/favicons?domain=${host}&sz=128`;
+const shotPath = `/shots/${r.id}.webp`;
+const shot = existsSync(`public${shotPath}`) ? shotPath : '';
+---
+<a
+  href={r.url}
+  target="_blank"
+  rel="noopener"
+  data-shot={shot}
+  class="resource group -mx-2 flex items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-100"
+>
+  <img src={icon} alt="" width="28" height="28" loading="lazy" class="size-7 shrink-0 rounded-md object-cover" />
+  <span class="flex min-w-0 flex-1 items-baseline gap-3">
+    <span class="shrink-0 font-medium text-neutral-900">{r.name}</span>
+    {r.description && <span class="min-w-0 truncate text-neutral-500">{r.description}</span>}
+  </span>
+  <span class="size-4 shrink-0 text-neutral-300 transition-colors group-hover:text-neutral-700 [&>svg]:size-full" set:html={arrow} />
+</a>

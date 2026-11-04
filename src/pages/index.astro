@@ -1,0 +1,32 @@
+---
+import '../styles/global.css';
+import CategorySection from '../components/CategorySection.astro';
+import Sidebar from '../components/Sidebar.astro';
+import HoverPreview from '../components/HoverPreview.astro';
+import { fetchResources, groupByCategory, hasNotion } from '../lib/notion';
+import { sample } from '../lib/sample';
+
+const resources = hasNotion ? await fetchResources() : sample;
+const groups = groupByCategory(resources);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Resource Hub</title>
+    <meta name="description" content="A personally curated collection of design, AI and inspiration resources." />
+  </head>
+  <body class="font-sans">
+    <header class="mx-auto max-w-3xl px-6 pb-8 pt-16">
+      <h1 class="text-4xl font-semibold tracking-tight">Resource Hub</h1>
+    </header>
+
+    <main class="mx-auto flex max-w-3xl flex-col gap-7 px-6 pb-20">
+      {groups.map(([name, items]) => <CategorySection name={name} items={items} />)}
+    </main>
+
+    <Sidebar groups={groups.map(([name, items]) => ({ name, count: items.length }))} />
+    <HoverPreview />
+  </body>
+</html>

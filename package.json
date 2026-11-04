@@ -1,0 +1,30 @@
+{
+  "name": "resource-hub",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "shots": "tsx --env-file=.env scripts/shots.ts && tsx --env-file=.env scripts/icons.ts",
+    "icons": "tsx --env-file=.env scripts/icons.ts",
+    "import": "tsx --env-file=.env scripts/import-bookmarks.ts",
+    "add": "tsx --env-file=.env scripts/add.ts",
+    "deploy": "tsx --env-file=.env scripts/deploy.ts"
+  },
+  "dependencies": {
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@notionhq/client": "^5.30.0",
+    "@phosphor-icons/core": "^2.1.1",
+    "@tailwindcss/vite": "^4.3.4",
+    "astro": "^7.3.8",
+    "tailwindcss": "^4.3.4"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1",
+    "sharp": "^0.35.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

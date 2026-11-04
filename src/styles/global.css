@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@import "@fontsource-variable/instrument-sans";
+
+@theme {
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+body { @apply bg-white text-neutral-900 antialiased; }
+
+html { scroll-behavior: smooth; }

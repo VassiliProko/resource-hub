@@ -1,0 +1,29 @@
+<div
+  id="preview"
+  class="pointer-events-none fixed left-0 top-0 z-50 hidden w-80 overflow-hidden rounded-xl border border-neutral-200 bg-white p-1"
+  aria-hidden="true"
+>
+  <img alt="" class="aspect-[16/10] w-full rounded-lg object-cover object-top" />
+</div>
+
+<script>
+  const box = document.getElementById('preview')!;
+  const img = box.querySelector('img')!;
+  const canHover = matchMedia('(hover: hover)').matches;
+
+  if (canHover) {
+    document.querySelectorAll<HTMLAnchorElement>('.resource').forEach((el) => {
+      const src = el.dataset.shot;
+      if (!src) return;
+      el.addEventListener('mouseenter', () => { img.src = src; box.classList.remove('hidden'); });
+      el.addEventListener('mouseleave', () => box.classList.add('hidden'));
+      el.addEventListener('mousemove', (e) => {
+        const w = 320, h = 220, pad = 20;
+        let x = e.clientX + pad, y = e.clientY + pad;
+        if (x + w > innerWidth) x = e.clientX - w - pad;
+        if (y + h > innerHeight) y = innerHeight - h - pad;
+        box.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    });
+  }
+</script>
